@@ -2,6 +2,70 @@
 
 One entry per loop iteration. Newest first.
 
+## 2026-10-29 — Cycle 2 (wallet-enabled hunt; real claim attempts)
+
+**Constraint set:** $0 spend. Receiving addresses supplied by operator:
+EVM/Base `0x2CA45537aC61394DEb1Ad18897E095A68E7Ab72a`, Solana `3q2zruZVf7mDviRA5BzFHQWsUDMRsbpipu7W3bFisBek`.
+Filters: no kyc / no stake / no bond / no purchase. No GitHub-PR bounties (human merge gate).
+
+**Outcome: no submission completed. Every payable rail is gated on access, identity, or funding — not on capability.**
+
+### Discovery
+
+With `wallet_evm` allowed, the feed offers **19 bounties**. Sources ranked by real payout history:
+
+| Bounty | Reward | Gate | Verdict |
+|---|---|---|---|
+| `direct:abf-growth-guide-5usdc` | $5 | Taskmarket escrow submission | ⛔ taskmarket.dev is a **$50/mo** product; task URLs return "use an invited wallet or task password" |
+| `taskmarket:TSK-*` (×3) | $2 ea | invited wallet / task password | ⛔ access-gated, deadlines 22:44 same day |
+| `frantic:129` | $16 | *"requires normal paid eligibility or one successful paid bounty"* | ⛔ new agents structurally excluded → 0 paid / 18 rejected |
+| `frantic:142` | $3 | `agent_kid, agent_token, verified_email_or_runx_github_identity` | ⚠ claimable at $0 **but** needs email round-trip on operator's address |
+| `hondo:a92081dd6c1f` etc. | $0.15 | `participation.mode = INCLUDE` | ⛔ proven ineligible (see below) |
+
+### Hondō — investigated in depth, then closed with proof
+
+Hondō is the only rail that explicitly needs **no key, no signer, no payment**. Two lanes:
+
+1. **`payment_surface_discovery.v1`** — "discover a public HTTP 402 surface", $0.01/execution, Base USDC.
+   Free to claim, GET-only, no signing. **All 20 open offers are drained:**
+   `cap_rem=0/50` and `rewarded=50/50` on every one (≈1,000 rewards paid, ~$10 total).
+   Found a valid 402 target for future use: `https://agent-bounty-feed.dailydollar.workers.dev/v1/bounties` → HTTP 402.
+2. **`structured_response.v3`** — live claim attempt made.
+   - Attempt 1 → `400 invalid_request`, `field_errors: header.Idempotency-Key` (key is required).
+   - Attempt 2 (with Idempotency-Key) → **`409 participation_ineligible`**.
+   - Cause confirmed against the saved task: `participation.mode = INCLUDE` requires the reward address to belong to the *frozen accepted-respondent set S*. A brand-new address can never satisfy it.
+   - `paid_service_trial.v3` lane requires paying an external service → excluded by the $0 rule.
+
+**Hondō verdict: paid real money (1,000 rewards) but is now closed to new addresses.** Not a scam — simply exhausted + cohort-gated.
+
+### Other rails
+
+| Rail | Finding |
+|---|---|
+| EXFER | Not a task market. No task/bounty endpoint exists (grep = 0). Only PoW mining. All 3 RPC nodes dead; token only on an illiquid "Innovation Zone" listing. |
+| Molt Market | `/health`: `settlement:false`, `withdrawals:false`, `deposits:false`, `operating_mode:"shadow"`, `circuit_breaker_open:true`. Cannot pay out. |
+| Agent Task Market (clawmint) | Self-host only, needs Docker + Postgres; `docker` absent. Credits would be local-only. |
+| TaskBounty (Magpie MCP) | `list_open_bounties` → `items: []`. |
+
+### The real bottleneck (revised)
+
+Cycle 1 identified "no wallet address". That was wrong — receiving is free and is now solved.
+The actual bottleneck is **account/identity verification**, not capability or wallet:
+
+- Hondō → cohort gate (INCLUDE) + exhausted capacity
+- Taskmarket → paid platform / invited wallet
+- Frantic #129 → prior paid success required
+- Frantic #142 → email-identity round-trip (needs operator's inbox)
+- clawmint → infrastructure (Docker) the machine lacks
+
+**Next viable action:** frantic:142 ($3) with a free Nitrosend account on an email the operator
+controls. Needs from operator: an email address for signup. Everything else (agent registration,
+MAP extraction, validation, digest recompute, report) is automatable from this machine.
+
+**Blocked on human:** provide an email address for the free Nitrosend signup (frantic:142), or
+accept that no $0 rail is currently completable.
+
+
 ## 2026-10-29 — Cycle 1 (four-platform verification sweep, $0 budget)
 
 **Constraint set:** exactly $0, no crypto wallet, no gas, no signup KYC, no upfront payment.
