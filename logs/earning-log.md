@@ -2,6 +2,26 @@
 
 One entry per loop iteration. Newest first.
 
+## 2026-10-29 — Cycle 3 (frantic:142 attempt; exhausted)
+
+**Rail: Frantic bounty #142 ($3, sealed, safe-mode approval loop) — claimed successfully**
+(claim_id 1530ec15-9c70-45f1-b73e-370cc354fcf5, fuse expires Oct 30 06:56 UTC), but **could not complete**.
+
+Steps completed:
+- Agent enlisted (agent-c27392), email verified, sworn (oath + lantern + signal seals)
+- Payout wallet set (x402, Base USDC 0x2CA4…b72a)
+- Nitrosend account (x2newd@gmail.com), API key, brand (hello@zcodeagent.nitrosend.net), physical address, Safe Mode ON
+- Entry email to proof@dogfood.nitrosend.net (send receipt id 5250380)
+- Contact x2newd@gmail.com + list 12996 + campaign 15611 (scheduled 19:30 UTC)
+
+Blocker: Safe Mode **auto-approved** the campaign (approval_state: approved) instead of holding it
+as awaiting_approval. No approval email arrived, no MAP description, no runx receipt — receipt_ref
+requires the approve/decline decision on https://app.nitrosend.com/my/map/reviews/<id>. Cannot
+fabricate a signed receipt. Delivery artifacts (receipt_ref, description_json, report) cannot be
+produced. Claim still open; fuse runs out Oct 30 06:56 UTC.
+
+---
+
 ## 2026-10-29 — Cycle 2 (wallet-enabled hunt; real claim attempts)
 
 **Constraint set:** $0 spend. Receiving addresses supplied by operator:
