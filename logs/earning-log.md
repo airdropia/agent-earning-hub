@@ -2,6 +2,67 @@
 
 One entry per loop iteration. Newest first.
 
+## 2026-10-29 — Cycle 4 (four-path sweep per operator direction; PATH 1 deployed)
+
+**Operator direction:** pursue PATH 1 Hondō watcher (fully autonomous), PATH 2 frantic:142 approval assist,
+PATH 3 Loopuman, PATH 4 BasedAgents. Rules: abandon on hard gate (wallet signature / KYC / paid account).
+
+### PATH 1 — Hondō Watcher ✅ DEPLOYED (no earnings yet)
+
+Built and deployed an autonomous watcher:
+- `scripts/hondo-watcher.ts` — polls `GET /api/agent/tasks?task_type=payment_surface_discovery.v1`,
+  claims any offer with `claimable:true` or `capacity_remaining>0`, logs every tick.
+- `memory/hondo-watcher.log` — append-only tick/claim log.
+- `memory/hondo-claims.jsonl` — JSONL record of successful claims.
+- Pi skill `~/.pi/agent/skills/hondo-watcher/SKILL.md`.
+- **Windows Task Scheduler task `hondo-watcher` registered, state Ready**, every 15 min for 24 h.
+
+Current board: **20/20 offers still drained** (`cap_rem=0/50`, `rewarded=50/50` each). Watcher will
+auto-claim the instant capacity appears. Reward $0.01/execution, Base USDC to 0x2CA4…b72a. Zero spend.
+
+### PATH 2 — frantic:142 approval assist ⛔ No approval email exists
+
+Used ego-browser on x2newd@gmail.com:
+- Search `nitrosend` → 1 result: "Your Nitrosend account is ready" (welcome email only, no approval link)
+- Search `frantic` → 0 results
+- Search `nitrosend OR frantic OR "safe mode"` → 0 results
+- Spam folder → only the Frantic agent email verification (already used)
+
+Confirmed: Safe Mode auto-approved campaign 15611 (`approval_state: approved`), so no
+"Approve this send" email was ever generated and no runx receipt exists. PATH 2 cannot complete.
+
+### PATH 3 — Loopuman ⛔ Requester-only, not a worker earner
+
+- Registered: `POST https://api.loopuman.com/api/v1/register` with x2newd@gmail.com → 201
+  (API key stored in `~/.pi/secrets/loopuman-agent.json`, free $0.10 credit = spending credit)
+- MCP server `seesayearn-boop/loopuman-mcp` tools: `ask_human`, `post_task`, `check_task`,
+  `get_balance`, `approve_submission`, `benchmark_agent` — **all agent-pays-human**.
+- No worker/claim/earn endpoints exist. The "earn USDC" claim in the README has no public API path.
+- Note: docs say "no email required," but registration required an email in practice.
+- Hard gate: to earn, the agent would have to be hired by a requester; no inbound task feed. ABANDONED.
+
+### PATH 4 — BasedAgents ⛔ Docker + bond gates
+
+API `GET https://api.basedagents.ai/v1/tasks?status=open` → **18 open tasks**:
+- 5 × $0.25 USDC "Industrial Sentinel Revenue Guard" — require `docker, automation, x402`
+- 5 × $2.00 USDC "Industrial Sentinel Revenue Cashback" — require `docker, automation, x402`
+- 8 × $0 free tasks (repo reputation only, no payout)
+- Every paid task requires Docker (absent on this machine) and generating ≥0.50 USDC of real
+  settled revenue before payout.
+- Bounty claims also need wallet proof + **1 bonded USDC per concurrent claim** (refundable, but
+  requires capital at risk). Free tasks need no bond but pay $0.
+- Hard gates: Docker unavailable + 1 USDC bond capital. ABANDONED for earnings.
+
+### Result
+
+**$0.00 earned this cycle.** PATH 1 is live and idle awaiting Hondō capacity. PATHs 2–4 hit hard gates
+(email/identity, requester-only, Docker+bond) and were abandoned per the operator's rules.
+
+**The one active earning mechanism:** `hondo-watcher` on Windows Task Scheduler, every 15 minutes.
+When Hondō posts new payment_surface_discovery offers, it auto-claims ($0.01 each, no identity step).
+
+---
+
 ## 2026-10-29 — Cycle 3 (frantic:142 attempt; exhausted)
 
 **Rail: Frantic bounty #142 ($3, sealed, safe-mode approval loop) — claimed successfully**
