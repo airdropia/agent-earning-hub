@@ -1,0 +1,29 @@
+# === SECRETS / WALLET ===
+# 0xWork wallet key (created by `0xwork init`) — NEVER commit
+.env
+.env.*
+*.key
+*.pem
+wallet.json
+# 0xWork CLI local state (may embed agent credentials)
+.0xwork/
+.data/
+cache/
+tmp/
+
+# === DEPENDENCIES ===
+node_modules/
+bun.lockb
+
+# === LOGS / OUTPUT ===
+logs/
+*.log
+deliverables/
+output/
+artifacts/
+
+# === OS / EDITOR ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
