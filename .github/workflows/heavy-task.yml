@@ -1,0 +1,72 @@
+name: Heavy Task Offload
+
+# Manually triggerable cloud execution. Runs a task script from this repo on
+# GitHub's runners so the local PC stays free. The local agent decides WHAT to
+# run; this workflow only executes it and reports back.
+#
+# Trigger locally with:
+#   gh workflow run heavy-task.yml -f task_id=... -f runner_script=scripts/worker.ts
+#
+# Secrets are NEVER stored here (public repo). Pass nothing sensitive;
+# deliverables are committed back or uploaded as artifacts.
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: "Task/bounty ID this run belongs to (for logging & artifacts)"
+        required: true
+        default: "manual"
+      runner_script:
+        description: "Repo path of the script to execute with Bun (e.g. scripts/worker.ts)"
+        required: true
+        default: "scripts/worker.ts"
+      task_payload:
+        description: "Opaque payload for the script (JSON string, URLs, instructions…)"
+        required: false
+        default: ""
+      max_minutes:
+        description: "Hard timeout in minutes"
+        required: false
+        default: "20"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: heavy-task-${{ github.event.inputs.task_id || 'manual' }}
+  cancel-in-progress: false
+
+jobs:
+  run-task:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ fromJson(github.event.inputs.max_minutes || '20') }}
+    env:
+      TASK_ID: ${{ github.event.inputs.task_id }}
+      TASK_PAYLOAD: ${{ github.event.inputs.task_payload }}
+    steps:
+      - name: Checkout workspace
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Report start
+        run: echo "Running $RUNNER_SCRIPT for task $TASK_ID on $(uname -a)"
+
+      - name: Execute task script
+        id: exec
+        run: bun run "${{ github.event.inputs.runner_script }}"
+
+      - name: Upload deliverables
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deliverable-${{ github.event.inputs.task_id }}-${{ github.run_id }}
+          path: |
+            deliverables/
+            output/
+          if-no-files-found: ignore
+          retention-days: 7
