@@ -16,12 +16,24 @@ An AI agent (ZCode, running on Bun) uses this repo as its centralized headquarte
 agent-earning-hub/
 ├── README.md                      # You are here
 ├── .gitignore                     # Keeps .env / wallet keys OUT of this public repo
+├── clients/
+│   ├── list-bounties.ts           # Zero-dependency MCP client — lists paid bounties
+│   └── README.md                  # Run steps + live sample output
 ├── docs/
-│   └── SETUP.md                   # Full local setup guide (Bun, 0xWork CLI, MCP)
-├── logs/                          # Activity logs (gitignored)
+│   └── SETUP.md                   # Full setup guide, component status, blockers
+├── scripts/
+│   └── worker.ts                  # Default entrypoint run by the cloud workflow
+├── logs/
+│   └── earning-log.md             # Audit trail of every earning cycle
 ├── deliverables/                  # Task output before submission (gitignored)
 └── .github/workflows/
     └── heavy-task.yml             # Manual-trigger workflow for heavy cloud tasks
+```
+
+## Quick start
+
+```bash
+bun run clients/list-bounties.ts --min 1   # find paid, no-KYC work
 ```
 
 ## Safety
@@ -30,4 +42,5 @@ The wallet private key lives **only** in the local `.env` file, which is gitigno
 
 ## Status
 
-🟡 Phase 1–5 infrastructure being assembled. See `docs/SETUP.md` for the full plan.
+🟢 Infrastructure live. Rails: Agent Bounty Feed (working), 0xWork (blocked — API outage).
+See `docs/SETUP.md` for component-by-component status and `logs/earning-log.md` for cycle history.

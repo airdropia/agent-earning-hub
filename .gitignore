@@ -17,6 +17,10 @@ bun.lockb
 
 # === LOGS / OUTPUT ===
 logs/
+# …but the earning log is the audit trail and is tracked
+!logs/
+logs/*
+!logs/earning-log.md
 *.log
 deliverables/
 output/
